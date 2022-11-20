@@ -11,12 +11,13 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
   Object.keys(apiControllerData).forEach((key)=>{
     if(typeof apiControllerData[key] === 'string'){
       apiControllerData[key] = apiControllerData[key].replace(/(^'|'$)/g, '');
+      apiControllerData[key] = apiControllerData[key].replace(/^\s+|\s+$/gm,'');
     }
   })
   
   if(Object.keys(apiControllerData).length === 10){
     type = 'Novtech';
-  } else if(apiControllerData['U_P_Slope'].split(' ')[1] === 'V'){
+  } else if(apiControllerData['Upslope'].indexOf('V') != -1){
     type = 'GF_MF';
   } else{
     type = 'GF_AC';
@@ -27,8 +28,8 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
         DeviceID,
         PowerFactor,
         ActualCurrent,
-        U_P_Slope,
-        error_code,
+        Upslope,
+        ErrorCodeDescription,
         Primary_current
       } = apiControllerData;
       sendingObj = {
@@ -37,15 +38,17 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
         ...apiControllerData,
         PowerFactor: parseFloat((+PowerFactor/100).toFixed(2)),
         ActualCurrent: parseFloat((+ActualCurrent/1000).toFixed(2)),
-        Upslope:U_P_Slope,
-        error_code: (+error_code)*50,
+        Upslope:Upslope,
+        error_code: (+ErrorCodeDescription)*50,
         SetCurrent : Primary_current
 
       }
   } else if(type === 'GF_MF'){
-      const { U_P_Slope,error_code } = apiControllerData;
+   
+      const { Upslope,ErrorCodeDescription } = apiControllerData;
       let error;
-  let ErrorCodeDescriptionFormatted = error_code;
+      
+  let ErrorCodeDescriptionFormatted = ErrorCodeDescription;
   try {
     if (
       ErrorCodeDescriptionFormatted &&
@@ -63,17 +66,18 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
         id: "device-" + uuidv4(),
         DateTime: dayjs().format("DD-MM-YYYY HH:mm:ss"),
         ...apiControllerData,
-        Upslope : U_P_Slope.split(' ')[0],
+        Upslope: Upslope.split(' ')[0],
         error_code: error,
         ActualCurrent: apiControllerData['ActualCurrent'].split(' ')[0],
         NominalCurrent: apiControllerData['NominalCurrent'].split(' ')[0],
-        SetCurrent: apiControllerData['SetCurrent'].split(' ')[0]
+        SetCurrent: apiControllerData['SetCurrent'].split(' ')[0],
+        ConductionAngle: apiControllerData['ConductionAngle'].split(' ')[0]
 
       }
   } else{
-    const { U_P_Slope,error_code } = apiControllerData;
+    const { Upslope,ErrorCodeDescription } = apiControllerData;
     let error;
-    let ErrorCodeDescriptionFormatted = error_code;
+    let ErrorCodeDescriptionFormatted = ErrorCodeDescription;
     try {
       if (
         ErrorCodeDescriptionFormatted &&
@@ -92,11 +96,12 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
       id: "device-" + uuidv4(),
       DateTime: dayjs().format("DD-MM-YYYY HH:mm:ss"),
       ...apiControllerData,
-      Upslope: U_P_Slope,
+      Upslope: Upslope,
       error_code: error,
       ActualCurrent: apiControllerData['ActualCurrent'].split(' ')[0],
       NominalCurrent: apiControllerData['NominalCurrent'].split(' ')[0],
-      SetCurrent: apiControllerData['SetCurrent'].split(' ')[0]
+      SetCurrent: apiControllerData['SetCurrent'].split(' ')[0],
+      ConductionAngle: apiControllerData['ConductionAngle'].split(' ')[0]
     }
   }   
   try {    
