@@ -28,8 +28,8 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
         DeviceID,
         PowerFactor,
         ActualCurrent,
-        Upslope,
-        ErrorCodeDescription,
+        U_P_Slope,
+        error_code,
         Primary_current
       } = apiControllerData;
       sendingObj = {
@@ -38,8 +38,8 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
         ...apiControllerData,
         PowerFactor: parseFloat((+PowerFactor/100).toFixed(2)),
         ActualCurrent: parseFloat((+ActualCurrent/1000).toFixed(2)),
-        Upslope:Upslope,
-        error_code: (+ErrorCodeDescription)*50,
+        Upslope:U_P_Slope,
+        error_code: (+error_code)*50,
         SetCurrent : Primary_current
 
       }
