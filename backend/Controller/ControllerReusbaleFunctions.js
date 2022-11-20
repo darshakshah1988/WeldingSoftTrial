@@ -7,6 +7,13 @@ const dayjs = require("dayjs");
 exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
   let isAdditionSuccessull = false;
   let type;
+
+  Object.keys(apiControllerData).forEach((key)=>{
+    if(typeof apiControllerData[key] === 'string'){
+      apiControllerData[key] = apiControllerData[key].replace(/(^'|'$)/g, '');
+    }
+  })
+  
   if(Object.keys(apiControllerData).length === 10){
     type = 'Novtech';
   } else if(apiControllerData['U_P_Slope'].split(' ')[1] === 'V'){
@@ -14,10 +21,10 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
   } else{
     type = 'GF_AC';
   }
-
   let sendingObj = {};
   if(type === 'Novtech'){
       const {
+        DeviceID,
         PowerFactor,
         ActualCurrent,
         U_P_Slope,
@@ -39,7 +46,6 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
       const { U_P_Slope,error_code } = apiControllerData;
       let error;
   let ErrorCodeDescriptionFormatted = error_code;
-  console.log("<<<<<<<<<<<<<<<<<<<ERRROR 111",error)
   try {
     if (
       ErrorCodeDescriptionFormatted &&
@@ -49,7 +55,6 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
       error = ErrorCodeDescriptionFormatted.match(
         ErrorCodeDescriptionRegex
       )[0];
-      console.log("<<<<<<<<<<<<<<<<<<<ERRROR",error)
     }
   } catch (error) {
     console.log(error);
