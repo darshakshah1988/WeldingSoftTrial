@@ -93,12 +93,12 @@ export function DataExport() {
                         "Line No":obj.lineNo,
                         "Station Number":obj.fixturenumber,
                         "Controller Number":obj.gunservingmodel,
-                        "Ppart Name":obj.partname,
-                        "Tip Force KGF at %bar":obj.spotcounterperjob,
+                        "Part Name":obj.partname,
+                        "Tip Force KGF at 5bar":obj.spotcounterperjob,
                         "Throat Depth mm":obj.tipdress,
                         "Throat Gap mm":obj.tipchange,
-                        "IsDeviceDeactivated":obj.isDeviceDeactivated,
-                        "DeactivatedReason":obj.deactivatedReason,
+                        "Is Device Deactivated":obj.isDeviceDeactivated,
+                        "Deactivated Reason":obj.deactivatedReason,
                       }
                 }
             })
