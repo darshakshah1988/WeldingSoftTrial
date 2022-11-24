@@ -114,11 +114,6 @@ route.get(
   controller.protectRoute,
   controller.getDeviceSettings
 );
-route.get(
-  "/DeviceSettings",
-  controller.protectRoute,
-  controller.getDeviceSetting
-);
 route.get("/LiveDevice", controller.protectRoute, controller.getLiveDevice);
 
 route.get("/Line/:LineNo", controller.protectRoute, controller.getSingleLineData);

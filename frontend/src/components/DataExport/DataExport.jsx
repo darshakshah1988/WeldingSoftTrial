@@ -10,7 +10,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { GET_ALL_DEVICES } from '../../Api/apiPath';
+import { GET_ALL_DEVICES, DEVICE_DATA } from '../../Api/apiPath';
 import {downloadCSV} from './utils'
 
 import Sidebar from "../sidebar/Sidebar";
@@ -80,13 +80,26 @@ export function DataExport() {
         let GF_AC = allData.GF_AC.length;
         let GF_MF = allData.GF_MF.length;
         if(novtech > 0 || GF_AC > 0 || GF_MF > 0){
-            let { data } = await getCall({ path: `/api/DeviceSetting` });
+            let { data } = await getCall({ path: `${DEVICE_DATA}` });
             let filename = 'NO_NAME';
             let deviceSettingData = {};
             data && data.data && data.data.forEach((obj)=>{
                 if(obj.devicenumber.includes(SelectedDevice)){
                     filename = obj.controllername;
-                    deviceSettingData = obj;
+                    deviceSettingData = {
+                        "Gun Number":obj.controllername,
+                        "Device Number":obj.devicenumber,
+                        "Customer Name":obj.customername,
+                        "Line No":obj.lineNo,
+                        "Station Number":obj.fixturenumber,
+                        "Controller Number":obj.gunservingmodel,
+                        "Ppart Name":obj.partname,
+                        "Tip Force KGF at %bar":obj.spotcounterperjob,
+                        "Throat Depth mm":obj.tipdress,
+                        "Throat Gap mm":obj.tipchange,
+                        "IsDeviceDeactivated":obj.isDeviceDeactivated,
+                        "DeactivatedReason":obj.deactivatedReason,
+                      }
                 }
             })
             validate(toastId, 1, GLOBAL_HEADING.Device_Name);

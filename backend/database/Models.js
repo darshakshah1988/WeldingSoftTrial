@@ -152,30 +152,6 @@ exports.devicesetting = sequelize.define('devicesetting', {
     createdAt: true,
     updatedAt: true
 });
-exports.devicesettings = sequelize.define('devicesettings', {
-    controllername: DataTypes.STRING(100),
-    devicenumber: DataTypes.STRING(100),
-    customername: DataTypes.STRING(100),
-    lineNo: DataTypes.STRING(255),
-    fixturenumber: DataTypes.STRING(45),
-    gunservingmodel: DataTypes.STRING(45),
-    partname: DataTypes.STRING(45),
-    spotcounterperjob: DataTypes.INTEGER,
-    tipdress: DataTypes.INTEGER,
-    tipchange: DataTypes.INTEGER,
-    isDeviceDeactivated: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-    },
-    deactivatedReason: {
-        type: DataTypes.TEXT,
-        defaultValue: "NA"
-    }
-}, {
-    timestamps: true,
-    createdAt: true,
-    updatedAt: true
-});
 
 exports.errorcode = sequelize.define('errorcode', {
     code: DataTypes.STRING(10),

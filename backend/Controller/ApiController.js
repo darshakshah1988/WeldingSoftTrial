@@ -2,7 +2,6 @@ const {
   controllerdata,
   maintains,
   devicesetting,
-  devicesettings,
   errorcode,
   users,
   line,
@@ -1173,27 +1172,6 @@ exports.getErrorRemedy = async (req, res) => {
 exports.getDeviceSettings = async (req, res) => {
   try {
     let data = await devicesetting.findAll({
-      attributes: {
-        exclude: ["id", "createdAt", "updatedAt"],
-      },
-    });
-
-    res.json({
-      data: data,
-      status: RESPONSE_STATUS.OK,
-      message: SUCCESS_RESPONSE.FETCH_SUCESS,
-    });
-  } catch (error) {
-    res.json({
-      error: error,
-      status: RESPONSE_STATUS.INTERNAL_SERVER_ERRROR,
-      message: FAILED_RESPONSE.CONTROLLER_GET_DATA_FAILED,
-    });
-  }
-};
-exports.getDeviceSetting = async (req, res) => {
-  try {
-    let data = await devicesettings.findAll({
       attributes: {
         exclude: ["id", "createdAt", "updatedAt"],
       },
