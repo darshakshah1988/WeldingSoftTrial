@@ -58,10 +58,10 @@ export function DataExport() {
 
     };
     const toastId = React.useRef(null);
-    const downloadCSVhandler = (novtech, GF_AC, GF_MF)=>{
-        downloadCSV(GF_AC, 'GF_AC')
-        downloadCSV(novtech, 'Novtech')
-        downloadCSV(GF_MF, 'GF_MF')
+    const downloadCSVhandler = (novtech, GF_AC, GF_MF,filename)=>{
+        downloadCSV(GF_AC, `${filename}_AC`)
+        downloadCSV(novtech, `${filename}_Novtech`)
+        downloadCSV(GF_MF, `${filename}_MF`)
     }
     const getAllDevicesApi = async () => {
         setIsDataLoading(true)
@@ -80,8 +80,15 @@ export function DataExport() {
         let GF_AC = allData.GF_AC.length;
         let GF_MF = allData.GF_MF.length;
         if(novtech > 0 || GF_AC > 0 || GF_MF > 0){
+            let { data } = await getCall({ path: `/api/DeviceSettings` });
+            let filename = 'NO_NAME';
+            data && data.data && data.data.forEach((obj)=>{
+                if(obj.devicenumber.includes(SelectedDevice)){
+                    filename = obj.controllername;
+                }
+            })
             validate(toastId, 1, GLOBAL_HEADING.Device_Name);
-            downloadCSVhandler(allData.Novtech,allData.GF_AC,allData.GF_MF)
+            downloadCSVhandler(allData.Novtech,allData.GF_AC,allData.GF_MF,filename)
         } else{
             validate(toastId, 0, GLOBAL_HEADING.Device_Name);
         }
