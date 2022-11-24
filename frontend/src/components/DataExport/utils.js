@@ -1,11 +1,11 @@
-import temp from "./temp.json";
+// import temp from "./temp.json";
 
-export function downloadCSV(data, csv_name) {
+export function downloadCSV(data, csv_name, deviceSettingData) {
     if (!data.length) {
       return true;
     }
     const link = document.createElement('a')
-    let csv = convertArrayOfObjectsToCSV(data)
+    let csv = convertArrayOfObjectsToCSV(data, deviceSettingData)
     if (csv === null) return
   
     const filename = `${csv_name}.csv`
@@ -17,9 +17,9 @@ export function downloadCSV(data, csv_name) {
     link.setAttribute('href', `${encodeURI(csv)}`)
     link.setAttribute('download', filename)
     link.click()
-  }
+}
   
-  export function convertArrayOfObjectsToCSV(array) {
+export function convertArrayOfObjectsToCSV(array, deviceSettingData) {
     let result;
   
     const columnDelimiter = ','
@@ -27,7 +27,7 @@ export function downloadCSV(data, csv_name) {
     const keys = Object.keys(array[0])
   
     result = ''
-    result = appendPreloadData(temp)
+    result = appendPreloadData(deviceSettingData)
     result += lineDelimiter
     result += lineDelimiter
     result += keys.join(columnDelimiter)
@@ -48,32 +48,22 @@ export function downloadCSV(data, csv_name) {
       result += lineDelimiter
     })
     return result;
-  }
+}
   
-  export function appendPreloadData(array) {
+export function appendPreloadData(object) {
     let result;
   
-    const columnDelimiter = ','
     const lineDelimiter = '\n'
-    const keys = Object.keys(array[0])
   
     result = ''
-    result += keys.join(columnDelimiter)
-    result += lineDelimiter
-  
-    array.forEach(item => {
-      let ctr = 0
-      keys.forEach(key => {
-        if (ctr > 0) {
-          result += columnDelimiter
-        }
-  
-        const final_string = item[key].toString().replace(/,/g, ' ')
-        result += final_string
-  
-        ctr++
-      })
+    Object.entries(object).forEach((entry)=>{
+      let [key, value] = entry;
+      result += `${key} = ${value}`;
       result += lineDelimiter
     })
+
+    result += lineDelimiter
+    result += lineDelimiter
+
     return result;
-  }
+}

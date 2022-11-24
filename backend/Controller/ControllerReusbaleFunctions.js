@@ -135,12 +135,13 @@ exports.convertControllerData = (data) => {
           ...obj,
           PowerFactor: +PowerFactor * 100,
           ActualCurrent: +ActualCurrent * 1000,
-          error_code: +error_code / 50,
+          Error_code: +error_code / 50,
           PrimaryCurrent: SetCurrent,
-          U_P_Slope: Upslope
+          Line_Voltage: Upslope
         }
         delete novtech['SetCurrent'];
         delete novtech['Upslope'];
+        delete novtech['error_code'];
         Object.entries(novtech).forEach((entry) => { //can be moved to upper loop
           let [key, value] = entry;
           if (value === null) {
@@ -154,23 +155,27 @@ exports.convertControllerData = (data) => {
         if (/^\d+$/.test(obj['Upslope'])) {
           let GF_MF = {};
           type = 'GF_MF';
-          let { Upslope } = obj;
+          let { Upslope,error_code } = obj;
           GF_MF = {
             ...obj,
+            Error_code: error_code,
             U_P_Slope: `${Upslope} V`
           }
           delete GF_MF['Upslope'];
+          delete GF_MF['error_code'];
           object['GF_MF'].push(GF_MF);
 
         } else if(obj['Upslope'].includes('!')){
           let GF_AC = {};
           type = 'GF_AC';
-          let { Upslope } = obj;
+          let { Upslope,error_code } = obj;
           GF_AC = {
             ...obj,
+            Error_code: error_code,
             U_P_Slope: Upslope
           }
           delete GF_AC['Upslope'];
+          delete GF_AC['error_code'];
           object['GF_AC'].push(GF_AC);
         }
       }
