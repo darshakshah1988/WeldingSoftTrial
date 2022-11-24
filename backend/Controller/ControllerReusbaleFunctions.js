@@ -112,6 +112,72 @@ exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
     return {isAdditionSuccessull, data:null, err:e};
   }
 };
+exports.convertControllerData = (data) => {
+  let array = [];
+    let object = { Novtech: [], GF_AC: [], GF_MF: [] }
+    let type;
+    data.forEach((ele) => {
+      let obj = ele.dataValues;
+      let nullCount = 0;
+      delete obj['createdAt'];
+      delete obj['updatedAt'];
+      Object.entries(obj).forEach((entry) => {
+        let [key, value] = entry;
+        if (value === null) {
+          nullCount++;
+        }
+      })
+      if (nullCount === 10) {
+        let novtech = {};
+        type = 'Novtech';
+        let { PowerFactor, SetCurrent, ActualCurrent, error_code, Upslope } = obj;
+        novtech = {
+          ...obj,
+          PowerFactor: +PowerFactor * 100,
+          ActualCurrent: +ActualCurrent * 1000,
+          error_code: +error_code / 50,
+          PrimaryCurrent: SetCurrent,
+          U_P_Slope: Upslope
+        }
+        delete novtech['SetCurrent'];
+        delete novtech['Upslope'];
+        Object.entries(novtech).forEach((entry) => { //can be moved to upper loop
+          let [key, value] = entry;
+          if (value === null) {
+            delete novtech[key];
+          }
+        })
+        object['Novtech'].push(novtech);
+
+      } else if (nullCount === 0) {
+
+        if (/^\d+$/.test(obj['Upslope'])) {
+          let GF_MF = {};
+          type = 'GF_MF';
+          let { Upslope } = obj;
+          GF_MF = {
+            ...obj,
+            U_P_Slope: `${Upslope} V`
+          }
+          delete GF_MF['Upslope'];
+          object['GF_MF'].push(GF_MF);
+
+        } else if(obj['Upslope'].includes('!')){
+          let GF_AC = {};
+          type = 'GF_AC';
+          let { Upslope } = obj;
+          GF_AC = {
+            ...obj,
+            U_P_Slope: Upslope
+          }
+          delete GF_AC['Upslope'];
+          object['GF_AC'].push(GF_AC);
+        }
+      }
+    })
+    array.push(object);
+    return array;
+}
 // exports.pushControllerDataIntoDatabase = async (apiControllerData) => {
 //   let isAdditionSuccessull = false;
 //   const {

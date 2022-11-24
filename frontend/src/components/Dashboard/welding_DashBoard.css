@@ -1,0 +1,28 @@
+.board_navBar{
+    margin-top: "10px";
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    background: #2D2D2D;
+}
+.lines{
+    margin-top: 2%;
+    width: 100%;
+    height: 40px;
+    background: #2D2D2D;
+    color:white;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.card-container{
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    margin-top: 2%;
+}
+.card-container-1{
+    display: flex;
+    flex-wrap: wrap;
+}

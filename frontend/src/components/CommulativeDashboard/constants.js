@@ -1,0 +1,1 @@
+export const OK_STATUS_FOR_CUMMILATIVE_DATA="E000";

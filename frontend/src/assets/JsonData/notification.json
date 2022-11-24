@@ -1,0 +1,22 @@
+[
+    {
+        "icon": "bx bx-error",
+        "content": "W001 Controller Scheduled Maintainance on 30/05/2022"
+    },
+    {
+        "icon": "bx bx-package",
+        "content": "W002 Controller Scheduled Maintainance on 30/05/2022"
+    },
+    {
+        "icon": "bx bx-cart",
+        "content": "W003 Controller Scheduled Maintainance on 30/05/2022"
+    },
+    {
+        "icon": "bx bx-error",
+        "content": "W004 Controller Scheduled Maintainance on 30/05/2022"
+    },
+    {
+        "icon": "bx bx-cart",
+        "content": "W005 Controller Scheduled Maintainance on 30/05/2022"
+    }
+]

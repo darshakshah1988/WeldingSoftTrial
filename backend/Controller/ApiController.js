@@ -27,7 +27,7 @@ const {
   TYPE_OF_INPUT_CLEANER,
 } = require("../Utlilities/Utilities");
 const {
-  pushControllerDataIntoDatabase,
+  pushControllerDataIntoDatabase, convertControllerData,
 } = require("./ControllerReusbaleFunctions");
 
 exports.createShift = async (req, res) => {
@@ -804,11 +804,7 @@ exports.getControllerDataViaDate = async (req, res) => {
   try {
     let deviceId = req.params["deviceId"];
     let startDate = dayjs(Number(req.params.stDate)).toDate();
-    //  console.log(typeof( JSON. stringify(startDate) ));
-    console.log(req.params.stDate);
-    console.log(startDate);
     let endDate = dayjs(Number(req.params.endDate)).toDate();
-    console.log(endDate);
 
     let devicesData = await controllerdata.findAll({
       attributes: { exclude: ["id"] },
@@ -821,6 +817,8 @@ exports.getControllerDataViaDate = async (req, res) => {
       order: [["createdAt", "ASC"]],
     });
 
+    let convertedData = convertControllerData(devicesData);
+
     // 1378233028000
     // 2013-09-03T18:30:28.000Z
     // 2022-09-04T06:30:28.000Z
@@ -831,7 +829,7 @@ exports.getControllerDataViaDate = async (req, res) => {
 
 
     res.json({
-      data: devicesData,
+      data: convertedData,
       message: SUCCESS_RESPONSE.FETCH_SUCESS,
       status: RESPONSE_STATUS.OK,
     });

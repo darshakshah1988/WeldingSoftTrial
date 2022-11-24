@@ -1,0 +1,30 @@
+
+[
+    {
+      "display_name": "Welding dashboard",
+      "route": "/",
+      "icon": "bx bx-user-pin"
+    },
+    {
+      "display_name": "Maintainance",
+      "route": "/Maintain",
+      "icon": "bx bx-user-pin"
+    },
+    {
+      "display_name": "User Setting",
+      "route": "/UserDetails",
+      "icon": "bx bx-user-pin"
+    },
+    {
+      "display_name": "Device Setting",
+      "route": "/AllDevice",
+      "icon": "bx bx-user-pin"
+  },
+  {
+      "display_name": "Error Remedy",
+      "route": "/ErrorRemedy",
+      "icon": "bx bx-user-pin"
+  }
+  
+  ]
+  
