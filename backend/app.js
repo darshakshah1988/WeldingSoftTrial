@@ -19,7 +19,7 @@ app.use(cors());
 app.use("/api", APIRoute);
 
 
-cron.schedule("*/20 * * * * *", ()=> {
+cron.schedule("*/20 * * * * *", ()=> {         // CRON time and occurances change  visit crontab.guru
     let data = controller.crondataTrial();
     console.log(data);
 },{
