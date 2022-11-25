@@ -1,6 +1,6 @@
 const route = require("express").Router();
 const { Router } = require("express");
-const controller = require("../Controller/ApiController");
+const controller = require('../Controller/ApiController');
 const { controllerdata } = require("../database/Models");
 
 route.get("/shift/:id",  controller.getSingleShiftById);

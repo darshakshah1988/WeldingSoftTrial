@@ -1,0 +1,23 @@
+Gun Number = TKE COMBO 2
+Device Number = GF220600004
+Customer Name = TATA
+Line No = line-c9b2402c-73c6-4101-b0b3-c29ccc4605d1
+Station Number = GF-5423
+Controller Number = GF-2345
+Part Name = car
+Tip Force KGF at 5bar = 500
+Throat Depth mm = 500
+Throat Gap mm = 200
+Is Device Deactivated = true
+Deactivated Reason = NA
+
+
+"DeviceID","DateTime","HardwareID","Program","PowerFactor","ActualWeldTimeCycles","HeatPertinCurrentIp","ActualCurrent","Error_code","PrimaryCurrent","Line_Voltage"
+"GF220600004","18-11-2022 16:36:33","0","1",48999,"5","62",13799,11,"155","466"
+"GF220600004","18-11-2022 16:39:19","0","1",48999,"5","62",13799,11,"155","466"
+"GF220600004","18-11-2022 16:43:38","0","1",48999,"5","62",13799,11,"155","466"
+"GF220600004","19-11-2022 12:16:39","0","1",48999,"5","62",13799,11,"155","466"
+"GF220600004","20-11-2022 10:09:31","0","1",48999,"5","62",13800,11,"155","466"
+"GF220600004","20-11-2022 10:29:53","0","1",48999,"5","62",13800,11,"155","466"
+"GF220600004","20-11-2022 10:42:15","0","1",48999,"5","62",13800,11,"155","466"
+"GF220600004","20-11-2022 10:49:13","0","1",48999,"5","62",13800,11,"155","466"

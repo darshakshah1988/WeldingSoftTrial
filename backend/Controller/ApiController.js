@@ -8,6 +8,11 @@ const {
   shift,
 } = require("../database/Models");
 
+const {Parser} = require('json2csv');
+const json2csv = new Parser();
+
+const fs = require('fs')
+
 const { v4: uuidv4 } = require("uuid");
 
 const jwt = require("jsonwebtoken");
@@ -29,6 +34,8 @@ const {
 const {
   pushControllerDataIntoDatabase, convertControllerData,
 } = require("./ControllerReusbaleFunctions");
+const sequelize = require("sequelize");
+const { downloadCSV, appendPreloadData } = require("./downloadCsvUtils");
 
 exports.createShift = async (req, res) => {
   let {
@@ -1538,3 +1545,107 @@ exports.getSingleUserById = async (req, res) => {
 };
 
 exports.getErrorDataForDashboard = async (req, res) => { };
+
+const getControllerDataForCron = async (deviceId, startDate, endDate) => {
+  try {
+    // deviceId = req.params["deviceId"];
+    console.log("<<<<PARAMS 1: ",deviceId, startDate, endDate)
+    // startDate = dayjs(startDate).toDate();
+    // endDate = dayjs(endDate).toDate();
+    // console.log("<<<<PARAMS 2: ",deviceId, startDate, endDate)
+    let devicesData = await controllerdata.findAll({
+      attributes: { exclude: ["id"] },
+      where: {
+        DeviceID: deviceId,
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+      order: [["createdAt", "ASC"]],
+    });
+
+    let convertedData = convertControllerData(devicesData);
+
+    return convertedData;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+const getContollerSettings = async (selectedDeviceId) => {
+  try {
+    let data = await devicesetting.findAll({
+      attributes: {
+        exclude: ["id", "createdAt", "updatedAt"],
+      },
+    });
+    let deviceSettingData = {};
+    let filename = 'NO_NAME';
+    data && data.forEach((obj)=>{
+      if(obj.devicenumber.includes(selectedDeviceId)){
+          filename = obj.controllername;
+          deviceSettingData = {
+              "Gun Number":obj.controllername,
+              "Device Number":obj.devicenumber,
+              "Customer Name":obj.customername,
+              "Line No":obj.lineNo,
+              "Station Number":obj.fixturenumber,
+              "Controller Number":obj.gunservingmodel,
+              "Part Name":obj.partname,
+              "Tip Force KGF at 5bar":obj.spotcounterperjob,
+              "Throat Depth mm":obj.tipdress,
+              "Throat Gap mm":obj.tipchange,
+              "Is Device Deactivated":obj.isDeviceDeactivated,
+              "Deactivated Reason":obj.deactivatedReason,
+            }
+      }
+  })
+    return {deviceSettingData, filename};
+  } catch (error) {
+    console.log("<<<<Device Setting Error::",error)
+  }
+};
+exports.crondataTrial = async (req, res) => {
+  try {
+    let data = await shift.findOne({where: {shiftName: "Shift 1"}});
+    let cdt = new Date();
+    let nowTime = cdt.getHours()+":"+cdt.getMinutes()+":"+cdt.getSeconds();
+    let currentMonth = cdt.getMonth()+1;
+    let nowDate = cdt.getFullYear()+"-"+ currentMonth +"-"+cdt.getDate();
+    let shiftName = "shift_1";
+    
+    // if(data.endTime == nowTime)
+    // {
+      let selectedDevice = "GF220600004";
+      // let startDate = `${nowDate} ${data.startTime}`;
+      let startDate = `2022-11-18 ${data.startTime}`;
+      let endDate = `${nowDate} ${data.endTime}`;
+      let reportpath = "./reports/";
+ 
+      const controllerData = await getControllerDataForCron(selectedDevice, startDate, endDate);
+      let allData = controllerData[0];
+        let novtech = allData.Novtech;
+        let GF_AC = allData.GF_AC;
+        let GF_MF = allData.GF_MF;
+      
+        console.log("<<<<<<",controllerData)
+        if(novtech.length > 0 || GF_AC.length > 0 || GF_MF.length > 0){
+          const {deviceSettingData, filename} = await getContollerSettings(selectedDevice);
+          console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<controllerSettings",deviceSettingData)
+          let preData =  appendPreloadData(deviceSettingData);
+          let novtechCsv=preData;
+          let GF_AC_Csv=preData;
+          let GF_MF_Csv=preData;
+          novtechCsv += json2csv.parse(novtech);
+          GF_AC_Csv += json2csv.parse(GF_AC);
+          GF_MF_Csv += json2csv.parse(GF_MF);     
+          fs.writeFileSync(`${reportpath}${filename}_Novtech_${nowDate}_${selectedDevice}_${shiftName}.csv`, novtechCsv);
+          fs.writeFileSync(`${reportpath}${filename}_AC_${nowDate}_${selectedDevice}_${shiftName}.csv`, GF_AC_Csv);
+          fs.writeFileSync(`${reportpath}${filename}_MF_${nowDate}_${selectedDevice}_${shiftName}.csv`, GF_MF_Csv);
+        }
+    // }
+  }
+  catch (error) {
+    console.log("ERROR Occoured",error)
+  }
+};
