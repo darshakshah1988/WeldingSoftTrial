@@ -9,7 +9,7 @@ const {
 } = require("../database/Models");
 
 const {Parser} = require('json2csv');
-const json2csv = new Parser();
+
 
 const fs = require('fs')
 
@@ -1581,6 +1581,16 @@ const getContollerSettings = async (selectedDeviceId) => {
     });
     let deviceSettingData = {};
     let filename = 'NO_NAME';
+    let lineName = '';
+    let lineId = "";
+    data && data.forEach((obj)=>{
+      lineId = obj.lineNo;
+    })
+    let lines = await line.findAll({
+      attributes: ["lineNo", "lineName"],
+      where:{lineNo : lineId}
+    });
+    lineName = lines[0].dataValues.lineName;
     data && data.forEach((obj)=>{
       if(obj.devicenumber.includes(selectedDeviceId)){
           filename = obj.controllername;
@@ -1588,7 +1598,7 @@ const getContollerSettings = async (selectedDeviceId) => {
               "Gun Number":obj.controllername,
               "Device Number":obj.devicenumber,
               "Customer Name":obj.customername,
-              "Line No":obj.lineNo,
+              "Line No":lineName,
               "Station Number":obj.fixturenumber,
               "Controller Number":obj.gunservingmodel,
               "Part Name":obj.partname,
@@ -1623,35 +1633,31 @@ exports.crondataTrial = async (req, res) => {
       let reportpath = "./reports/";
  
       const controllerData = await getControllerDataForCron(selectedDevice, startDate, endDate);
-      console.log("Total Data :"+controllerData.length);
       let allData = controllerData[0];
         let novtech = allData.Novtech;
         let GF_AC = allData.GF_AC;
         let GF_MF = allData.GF_MF;
-      
-        console.log("<<<<<<",controllerData)
         if(novtech.length > 0 || GF_AC.length > 0 || GF_MF.length > 0){
           const {deviceSettingData, filename} = await getContollerSettings(selectedDevice);
-          console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<controllerSettings",deviceSettingData)
           let preData =  appendPreloadData(deviceSettingData);
           let novtechCsv=preData;
           let GF_AC_Csv=preData;
           let GF_MF_Csv=preData;
 
-          if(novtech.length > 0)
-          {
-            novtechCsv += json2csv.parse(novtech);
-            fs.writeFileSync(`${reportpath}${filename}_Novtech_${nowDate}_${selectedDevice}_${shiftName}.csv`, novtechCsv);
-          }
-
           if(GF_AC.length > 0)
-          {
+          { const json2csv = new Parser();
             GF_AC_Csv += json2csv.parse(GF_AC);
             fs.writeFileSync(`${reportpath}${filename}_AC_${nowDate}_${selectedDevice}_${shiftName}.csv`, GF_AC_Csv);
           }
 
+          if(novtech.length > 0)
+          {  const json2csv = new Parser();
+            novtechCsv += json2csv.parse(novtech);
+            fs.writeFileSync(`${reportpath}${filename}_Novtech_${nowDate}_${selectedDevice}_${shiftName}.csv`, novtechCsv);
+          }
+
           if(GF_MF.length > 0)
-          {
+          { const json2csv = new Parser();
             GF_MF_Csv += json2csv.parse(GF_MF);     
             fs.writeFileSync(`${reportpath}${filename}_MF_${nowDate}_${selectedDevice}_${shiftName}.csv`, GF_MF_Csv);
           }
