@@ -657,16 +657,20 @@ exports.getAllLinesData = async (req, res) => {
       let resObj = [];
 
       for (i = 0; i < userData.length; i++) {
+        let deviceId = "";
+        if(userData[i]?.dataValues?.devicenumber){
+          deviceId = userData[i]?.dataValues?.devicenumber;
+        }
         let controllerData = await controllerdata.findAll({
           where: {
-            DeviceID: userData[i].devicenumber,
+            DeviceID: deviceId,
           },
         });
         count.push(controllerData.length); //sum of rows
 
         let errorCodes = await controllerdata.findAll({
           where: {
-            DeviceID: userData[i].devicenumber,
+            DeviceID: deviceId,
             error_code: {
               [Op.ne]: OK_STATUS_FOR_CONTROLLER_DATA,
             },
@@ -677,19 +681,27 @@ exports.getAllLinesData = async (req, res) => {
         let lastTime = await controllerdata.findAll({
           attributes: ["updatedAt"],
           where: {
-            DeviceID: userData[i].devicenumber,
+            DeviceID: deviceId,
           },
           order: [["updatedAt", "DESC"]],
         });
         time.push(lastTime.updatedAt); //to get last updated time
       }
       for (i = 0; i < userData.length; i++) {
+        let controllername = "";
+        let deviceId = "";
+        if(userData[i]?.dataValues?.controllername){
+          controllername = userData[i]?.dataValues?.controllername;
+        }
+        if(userData[i]?.dataValues?.devicenumber){
+          deviceId = userData[i]?.dataValues?.devicenumber;
+        }
         resObj.push({
-          controllerName: userData[i].controllername,
+          controllerName: controllername,
           totalJoints: count[i],
           errorCount: ecount[i],
           DateTime: time[i],
-          DeviceID: userData[i].devicenumber,
+          DeviceID: deviceId,
           lineNo,
           lineName,
         });
@@ -711,6 +723,29 @@ exports.getAllLinesData = async (req, res) => {
     });
   }
 };
+exports.getLineData = async (req, res) =>{
+  try {
+    let lines = await line.findAll({
+      attributes: ["lineNo", "lineName"],
+      where: {
+        lineNo: req.params.lineNo,
+      },
+    });
+    res.json({
+      data: lines,
+      message: "SUCCESS_RESPONSE.FETCH_SUCCESS",
+      status: RESPONSE_STATUS.OK,
+    });
+    
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error: error,
+      message: SUCCESS_RESPONSE.USER_GET_DATA_FAILED,
+      status: RESPONSE_STATUS.INTERNAL_SERVER_ERRROR,
+    });
+  }
+}
 
 exports.getSingleLineData = async (req, res) => {
   let count = [];
