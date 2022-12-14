@@ -55,12 +55,12 @@ function Welding_DashBoard() {
                     <Card sx={{ minWidth: 275, textVerticalAlign: "center" }}>
                         <CardContent>
                             <Typography sx={{ fontSize: 20 }}  >
-                                Total Welding machines: {apiData.dashboardData.length}
+                                Total Welding machines: {apiData?.dashboardData?.length}
                             </Typography>
                         </CardContent>
                     </Card>
                     <Box className="mt-2">
-                        <DashboardTabs lineData={apiData.lineData} dashboardData={apiData.dashboardData} />
+                        <DashboardTabs lineData={apiData?.lineData} dashboardData={apiData?.dashboardData} />
                     </Box>
                 </Box>
             }

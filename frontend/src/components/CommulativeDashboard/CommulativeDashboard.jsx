@@ -59,7 +59,7 @@ const CommulativeDashboard = () => {
       isApiConnectionSucceess,
       data
     } = await getCall({ path: `${CUMMILATIVE_DASHBOARD_DATA}/${deviceID}` + `${isFetchingCustomDateData ? `/${dayjs(start).format('x')}/${dayjs(end).format('x')}` : ``}` });
-
+    console.log("<<<<<<<<<<<<<",data.data)
     setcummilativeData(data.data)
     setTimeout(() => {
 
