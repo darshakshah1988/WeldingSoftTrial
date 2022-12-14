@@ -118,6 +118,7 @@ route.get("/LiveDevice", controller.protectRoute, controller.getLiveDevice);
 
 route.get("/Line/:LineNo", controller.protectRoute, controller.getSingleLineData);
 route.get("/Line", controller.protectRoute, controller.getAllLinesData);
+route.get("/LineData/:lineNo", controller.protectRoute, controller.getLineData);
 route.get(
   "/Line/:stDate/:endDate",
   controller.protectRoute,
